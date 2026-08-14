@@ -1,4 +1,5 @@
 import click
+from src.config.schema import Config
 
 
 
@@ -10,16 +11,18 @@ import click
 '''
 
 @click.command()
-@click.option('--count', default=1, help='Number of times to greet.')
-@click.option('--name', prompt='Your name', help='The person to greet.')
-@click.option('--shout', is_flag=True, help='Print the message in uppercase.')
-@click.argument('filename', type=click.Path())
-def ingest():
+@click.option('--config', default='configs/base.yaml', help='Path to config file', type=click.Path(exists=True))
+def main(config):
 
+	# test the yaml parsing
+	config = Config(config)
+
+
+	print(config)
 
 	return
 
 
 
 if __name__ == '__main__':
-    ingest()
+    main()

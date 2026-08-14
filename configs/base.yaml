@@ -1,0 +1,26 @@
+data:
+  raw_dir: data/raw/bdd100k
+  splits_dir: data/splits
+  predictions_dir: data/predictions
+  selections_dir: data/selections
+  yolo_dir: data/yolo
+
+splits:
+  seed_fraction: 0.05
+  unlabeled_fraction: 0.75
+  val_fraction: 0.10
+  test_fraction: 0.10
+
+model:
+  weights: yolov8n.pt
+  imgsz: 640
+  epochs: 50
+  batch: 16
+
+mining:
+  label_budget: 2000
+  signals:
+    - uncertainty
+    - rare_class
+  diversity:
+    max_per_scene: 5
