@@ -1,5 +1,7 @@
 data:
   raw_dir: data/raw
+  image_width: 1280
+  image_height: 720
   splits_dir: data/splits
   predictions_dir: data/predictions
   selections_dir: data/selections

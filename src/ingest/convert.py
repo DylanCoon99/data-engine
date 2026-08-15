@@ -1,4 +1,5 @@
 from pathlib import Path
+import json
 
 
 
@@ -45,7 +46,7 @@ Categories (10 classes):
 
 
 
-def convert(label_path: Path, yolo_dir: Path):
+def convert(data: DataConfig):
 	# BDD100K JSON → YOLO .txt labels
 	'''
 	label_path: input to json labels
@@ -53,47 +54,36 @@ def convert(label_path: Path, yolo_dir: Path):
 	'''
 	categories = json.loads(Path("configs/categories.json").read_text())
 
+	label_path = data.raw_dir / "labels" / "det_v2_train_release.json"
+	yolo_dir = data.yolo_dir
+
+	image_width = data.image_width
+	image_height = data.image_height
+
 	# open the json
 	try:
 		with label_path.open("r", encoding="utf-8") as file:
-			data = json.load(file)
+			raw_labels = json.load(file)
 		
 	except FileNotFoundError:
 		print("Error: File not found.")
 		return
 
-
-	'''
-	How yolo expects the data
-
-	class_id x_center y_center width height                                                                                                                        
-	                                                                                                                                                         
-	So for a car (class_id=2) with box2d: {x1: 49.44, y1: 254.53, x2: 357.81, y2: 487.91} on a 1280x720 image:                                                     
-	                                                                                                                                                       
-	2 0.1591 0.5153 0.2409 0.3241                                                                                                                                  
-	                                                                                                                                                         
-	Where:
-	- x_center = (49.44 + 357.81) / 2 / 1280                                                                                                                       
-	- y_center = (254.53 + 487.91) / 2 / 720                                                                                                                       
-	- width = (357.81 - 49.44) / 1280       
-	- height = (487.91 - 254.53) / 720   
-
-
-	'''
-
-
 	# iterate over the data dictionary
-	for video in data:
-		label_file = Path(videoName + ".txt")
+	for video in raw_labels:
+		videoName = video["videoName"]
+		label_file = yolo_dir / (videoName + ".txt")
 		labels = video["labels"]
-		with label_file.open("a") as file:
-			
-			header = 
-			file.write()
+		with label_file.open("w") as file:
 			for label in labels:
 				# process each label and bbox -> write it to the file
-				
-
-
+				class_id = categories[label["category"]]
+				bbox = label["box2d"]
+				x1, x2, y1, y2 = bbox["x1"], bbox["x2"], bbox["y1"], bbox["y2"]
+				x_center = (x1 + x2) / 2 / image_width
+				y_center = (y1 + y2) / 2 / image_height
+				width = (x2 - x1) / image_width
+				height = (y2 - y1) / image_height
+				file.write(f"{class_id} {x_center} {y_center} {width} {height}\n")
 
 	return

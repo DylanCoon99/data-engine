@@ -55,10 +55,10 @@ def main(config):
 	config = Config(config)
 
 
-	yolo_dir = config.data.yolo_dir # output yolo txt directory (where the txt labels go)
+	 # output yolo txt directory (where the txt labels go)
 
 	# convert: provide label json path and output txt path
-	convert()
+	convert(config.data)
 
 	# split
 

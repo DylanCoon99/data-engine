@@ -11,6 +11,8 @@ class DataConfig:
     predictions_dir: Path = Path("data/predictions")
     selections_dir: Path = Path("data/selections")
     yolo_dir: Path = Path("data/yolo")
+    image_width: int = 1280
+    image_height: int = 720
 
 
 @dataclass
@@ -52,7 +54,11 @@ class Config:
         raw = yaml.safe_load(Path(yaml_path).read_text())
 
         data_raw = raw.get("data", {})
-        self.data = DataConfig(**{k: Path(v) for k, v in data_raw.items()})
+        path_fields = {"raw_dir", "splits_dir", "predictions_dir", "selections_dir", "yolo_dir"}
+        self.data = DataConfig(**{
+            k: Path(v) if k in path_fields else v
+            for k, v in data_raw.items()
+        })
         self.splits = SplitsConfig(**raw.get("splits", {}))
         self.model = ModelConfig(**raw.get("model", {}))
 
