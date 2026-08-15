@@ -6,11 +6,11 @@ import yaml
 
 @dataclass
 class DataConfig:
-    raw_dir: str = "data/raw/bdd100k"
-    splits_dir: str = "data/splits"
-    predictions_dir: str = "data/predictions"
-    selections_dir: str = "data/selections"
-    yolo_dir: str = "data/yolo"
+    raw_dir: Path = Path("data/raw")
+    splits_dir: Path = Path("data/splits")
+    predictions_dir: Path = Path("data/predictions")
+    selections_dir: Path = Path("data/selections")
+    yolo_dir: Path = Path("data/yolo")
 
 
 @dataclass
@@ -51,7 +51,8 @@ class Config:
     def __init__(self, yaml_path: str | Path):
         raw = yaml.safe_load(Path(yaml_path).read_text())
 
-        self.data = DataConfig(**raw.get("data", {}))
+        data_raw = raw.get("data", {})
+        self.data = DataConfig(**{k: Path(v) for k, v in data_raw.items()})
         self.splits = SplitsConfig(**raw.get("splits", {}))
         self.model = ModelConfig(**raw.get("model", {}))
 

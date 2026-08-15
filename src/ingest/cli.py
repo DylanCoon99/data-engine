@@ -16,6 +16,35 @@ from src.config.schema import Config
 │   └── cli.py                # Click/Typer entry point: `python -m src.ingest`
 
 
+
+Config File Structure
+data:
+  raw_dir: data/raw
+  splits_dir: data/splits
+  predictions_dir: data/predictions
+  selections_dir: data/selections
+  yolo_dir: data/yolo
+
+splits:
+  seed_fraction: 0.05
+  unlabeled_fraction: 0.75
+  val_fraction: 0.10
+  test_fraction: 0.10
+
+model:
+  weights: yolov8n.pt
+  imgsz: 640
+  epochs: 50
+  batch: 16
+
+mining:
+  label_budget: 2000
+  signals:
+    - uncertainty
+    - rare_class
+  diversity:
+    max_per_scene: 5
+
 '''
 
 @click.command()
@@ -24,6 +53,15 @@ def main(config):
 
 	# test the yaml parsing
 	config = Config(config)
+
+
+	yolo_dir = config.data.yolo_dir # output yolo txt directory (where the txt labels go)
+
+	# convert: provide label json path and output txt path
+	convert()
+
+	# split
+
 
 
 	print(config)
