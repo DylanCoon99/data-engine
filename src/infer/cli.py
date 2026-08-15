@@ -5,8 +5,13 @@ from src.config.schema import Config
 
 
 '''
-- Each stage is its own CLI command (python -m src.ingest, python -m src.infer, etc.)                                                                          
+- Each stage is its own CLI command (python -m src.infer, python -m src.infer, etc.)                                                                          
 - The Makefile is your orchestrator — make pipeline just calls each stage in order
+
+├── infer/                    # Stage 2: batch inference over unlabeled pool
+│   ├── __init__.py
+│   ├── batch.py              # Chunked, resumable inference → Parquet shards
+│   └── cli.py
 
 '''
 

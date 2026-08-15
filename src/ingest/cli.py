@@ -8,6 +8,14 @@ from src.config.schema import Config
 - Each stage is its own CLI command (python -m src.ingest, python -m src.infer, etc.)                                                                          
 - The Makefile is your orchestrator — make pipeline just calls each stage in order
 
+
+├── ingest/                   # Stage 1: dataset download, BDD→YOLO conversion, split generation
+│   ├── __init__.py
+│   ├── convert.py            # BDD100K JSON → YOLO .txt labels
+│   ├── split.py              # Generate scene-wise splits, write split manifests to Parquet
+│   └── cli.py                # Click/Typer entry point: `python -m src.ingest`
+
+
 '''
 
 @click.command()
