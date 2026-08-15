@@ -1,5 +1,11 @@
 from pathlib import Path
 import json
+import logging
+
+from src.config.schema import DataConfig
+from src.config.constants import TRAIN_LABELS_FILE
+
+logger = logging.getLogger(__name__)
 
 
 
@@ -54,36 +60,51 @@ def convert(data: DataConfig):
 	'''
 	categories = json.loads(Path("configs/categories.json").read_text())
 
-	label_path = data.raw_dir / "labels" / "det_v2_train_release.json"
+	label_path = data.raw_dir / TRAIN_LABELS_FILE
 	yolo_dir = data.yolo_dir
 
 	image_width = data.image_width
 	image_height = data.image_height
 
+	yolo_dir.mkdir(parents=True, exist_ok=True)
+
+	logger.info("Loading labels from %s", label_path)
+
 	# open the json
 	try:
 		with label_path.open("r", encoding="utf-8") as file:
 			raw_labels = json.load(file)
-		
+
 	except FileNotFoundError:
-		print("Error: File not found.")
+		logger.error("Label file not found: %s", label_path)
 		return
+
+	logger.info("Loaded %d frames", len(raw_labels))
+
+	skipped = 0
+	converted = 0
 
 	# iterate over the data dictionary
 	for video in raw_labels:
 		videoName = video["videoName"]
 		label_file = yolo_dir / (videoName + ".txt")
 		labels = video["labels"]
+		if labels is None:
+			skipped += 1
+			continue
 		with label_file.open("w") as file:
 			for label in labels:
+				bbox = label.get("box2d")
+				if bbox is None:
+					continue
 				# process each label and bbox -> write it to the file
 				class_id = categories[label["category"]]
-				bbox = label["box2d"]
 				x1, x2, y1, y2 = bbox["x1"], bbox["x2"], bbox["y1"], bbox["y2"]
 				x_center = (x1 + x2) / 2 / image_width
 				y_center = (y1 + y2) / 2 / image_height
 				width = (x2 - x1) / image_width
 				height = (y2 - y1) / image_height
 				file.write(f"{class_id} {x_center} {y_center} {width} {height}\n")
+		converted += 1
 
-	return
+	logger.info("Done: %d converted, %d skipped (no labels)", converted, skipped)

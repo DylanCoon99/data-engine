@@ -2,16 +2,17 @@ data:
   raw_dir: data/raw
   image_width: 1280
   image_height: 720
-  splits_dir: data/splits
-  predictions_dir: data/predictions
-  selections_dir: data/selections
-  yolo_dir: data/yolo
+  splits_dir: /Volumes/T7/data-engine-dataset/splits
+  predictions_dir: /Volumes/T7/data-engine-dataset/predictions
+  selections_dir: /Volumes/T7/data-engine-dataset/selections
+  yolo_dir: /Volumes/T7/data-engine-dataset/yolo
 
 splits:
+  # fractions of the 70k BDD100K train set
+  # test split is BDD100K val (10k) — not configurable
   seed_fraction: 0.05
   unlabeled_fraction: 0.75
-  val_fraction: 0.10
-  test_fraction: 0.10
+  val_fraction: 0.20
 
 model:
   weights: yolov8n.pt

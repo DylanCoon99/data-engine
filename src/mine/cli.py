@@ -23,7 +23,6 @@ def main(config):
 	# test the yaml parsing
 	config = Config(config)
 
-
 	print(config)
 
 	return

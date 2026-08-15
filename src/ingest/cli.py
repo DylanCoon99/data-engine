@@ -1,5 +1,9 @@
+import logging
+
 import click
 from src.config.schema import Config
+from src.ingest.convert import convert
+from src.ingest.split import split
 
 
 
@@ -50,21 +54,15 @@ mining:
 @click.command()
 @click.option('--config', default='configs/base.yaml', help='Path to config file', type=click.Path(exists=True))
 def main(config):
+	logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(name)s] %(message)s")
 
-	# test the yaml parsing
 	config = Config(config)
-
-
-	 # output yolo txt directory (where the txt labels go)
 
 	# convert: provide label json path and output txt path
 	convert(config.data)
-
 	# split
+	split(config)
 
-
-
-	print(config)
 
 	return
 

@@ -8,5 +8,8 @@
   "motorcycle": 6,
   "bicycle": 7,
   "traffic light": 8,
-  "traffic sign": 9
+  "traffic sign": 9,
+  "other person": 10,
+  "other vehicle": 11,
+  "trailer": 12
 }

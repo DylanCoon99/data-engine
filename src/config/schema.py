@@ -19,8 +19,7 @@ class DataConfig:
 class SplitsConfig:
     seed_fraction: float = 0.05
     unlabeled_fraction: float = 0.75
-    val_fraction: float = 0.10
-    test_fraction: float = 0.10
+    val_fraction: float = 0.20
 
 
 @dataclass
