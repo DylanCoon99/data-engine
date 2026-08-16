@@ -28,6 +28,7 @@ class ModelConfig:
     imgsz: int = 640
     epochs: int = 50
     batch: int = 16
+    conf_threshold: float = 0.25
 
 
 @dataclass

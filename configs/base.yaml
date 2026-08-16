@@ -19,6 +19,7 @@ model:
   imgsz: 640
   epochs: 50
   batch: 16
+  conf_threshold: 0.25
 
 mining:
   label_budget: 2000
