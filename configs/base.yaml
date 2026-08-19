@@ -11,15 +11,16 @@ splits:
   # fractions of the 70k BDD100K train set
   # test split is BDD100K val (10k) — not configurable
   seed_fraction: 0.05
-  unlabeled_fraction: 0.75
-  val_fraction: 0.20
+  unlabeled_fraction: 0.90
+  val_fraction: 0.05
 
 model:
   weights: yolov8n.pt
   imgsz: 640
-  epochs: 50
+  epochs: 10
   batch: 16
   conf_threshold: 0.25
+  device: mps
 
 mining:
   label_budget: 2000

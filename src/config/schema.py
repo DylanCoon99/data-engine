@@ -29,6 +29,7 @@ class ModelConfig:
     epochs: int = 50
     batch: int = 16
     conf_threshold: float = 0.25
+    device: str = "mps"
 
 
 @dataclass
