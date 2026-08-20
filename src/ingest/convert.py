@@ -3,7 +3,7 @@ import json
 import logging
 
 from src.config.schema import DataConfig
-from src.config.constants import TRAIN_LABELS_FILE
+from src.config.constants import TRAIN_LABELS_FILE, VAL_LABELS_FILE
 
 logger = logging.getLogger(__name__)
 
@@ -52,29 +52,17 @@ Categories (10 classes):
 
 
 
-def convert(data: DataConfig):
-	# BDD100K JSON → YOLO .txt labels
-	'''
-	label_path: input to json labels
-	yolo_dir: output to yolo txt labels
-	'''
+def _convert_label_file(label_path: Path, yolo_dir: Path, image_width: int, image_height: int):
+	"""Convert a single BDD100K label JSON to YOLO .txt files."""
 	categories = json.loads(Path("configs/categories.json").read_text())
-
-	label_path = data.raw_dir / TRAIN_LABELS_FILE
-	yolo_dir = data.yolo_dir
-
-	image_width = data.image_width
-	image_height = data.image_height
 
 	yolo_dir.mkdir(parents=True, exist_ok=True)
 
 	logger.info("Loading labels from %s", label_path)
 
-	# open the json
 	try:
 		with label_path.open("r", encoding="utf-8") as file:
 			raw_labels = json.load(file)
-
 	except FileNotFoundError:
 		logger.error("Label file not found: %s", label_path)
 		return
@@ -84,7 +72,6 @@ def convert(data: DataConfig):
 	skipped = 0
 	converted = 0
 
-	# iterate over the data dictionary
 	for video in raw_labels:
 		videoName = video["videoName"]
 		label_file = yolo_dir / (videoName + ".txt")
@@ -97,7 +84,6 @@ def convert(data: DataConfig):
 				bbox = label.get("box2d")
 				if bbox is None:
 					continue
-				# process each label and bbox -> write it to the file
 				class_id = categories[label["category"]]
 				x1, x2, y1, y2 = bbox["x1"], bbox["x2"], bbox["y1"], bbox["y2"]
 				x_center = (x1 + x2) / 2 / image_width
@@ -108,3 +94,15 @@ def convert(data: DataConfig):
 		converted += 1
 
 	logger.info("Done: %d converted, %d skipped (no labels)", converted, skipped)
+
+
+def convert(data: DataConfig):
+	"""Convert both train and val BDD100K labels to YOLO format."""
+	w = data.image_width
+	h = data.image_height
+
+	# train labels
+	_convert_label_file(data.raw_dir / TRAIN_LABELS_FILE, data.yolo_dir, w, h)
+
+	# val labels (used as test set)
+	_convert_label_file(data.raw_dir / VAL_LABELS_FILE, data.yolo_dir, w, h)
